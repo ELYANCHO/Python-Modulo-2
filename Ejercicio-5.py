@@ -9,7 +9,9 @@ def poi(numero_usuario):
         respuesta (bool): Respuesta si el número del usuario es par o impar
     """
     resultado = "Par" if numero_usuario % 2 == 0 else "Impar"
-    respuesta = f"El numero {numero_usuario} es {resultado}"
+    respuesta = f"El número {numero_usuario} es {resultado}"
+    if numero_usuario % 5 == 0:
+        print("El número es múltiplo de 5")
     return respuesta
 
 def main (value=None):
