@@ -1,3 +1,11 @@
+def pedir_edad():
+    while True:
+        entrada = input("Ingrese su edad: ")
+        if entrada.isdigit():
+            return int(entrada)
+        else:
+            print("Por favor, ingrese solo números válidos (sin letras ni símbolos).")
+
 def verificador_edad(edad):
     """
    Esta función toma la edad del usuario y define si es mayor de edad, niño menor, joven o mayor de edad.
@@ -11,7 +19,7 @@ def verificador_edad(edad):
        """
     global entrada
     entrada = 0
-    final =""
+    final = ""
 
     if 1 < edad <= 12:
         entrada = 10000
@@ -23,9 +31,11 @@ def verificador_edad(edad):
         entrada = 20000
         final = f"Usted es un adulto, su entada tiene un costo de {entrada}"
     elif edad >= 80:
-        final = f"No puede ingresar muertos al cine"
+        print(f"No puede ingresar muertos al cine")
+        exit(0)
     else:
-        final = "No ha nacido"
+        print("No ha nacido")
+        exit(0)
     return final
 
 def verificador_ocupacion(ocupacion):
@@ -40,21 +50,21 @@ def verificador_ocupacion(ocupacion):
            str: final2 (mensaje + el valor de la entrada al cine con descuento)
            """
     ocupacion_nueva = ocupacion.replace(" ", "")
-    final2= ""
+    final2 = ""
     if ocupacion_nueva.lower() == "s":
         descuento = entrada * 0.10
         entrada_nueva = entrada - descuento
         final2 = (f"El descuento es de {descuento}\n"
                   f"------------------------------------------\n"
-              f"El valor de su entrada es de {entrada_nueva}\n"
+                  f"El valor de su entrada es de {entrada_nueva}\n"
                   f"------------------------------------------")
     else:
         final2 = (f"Usted no tiene descuento\n"
-              f"su Entrada es de {entrada}")
+                  f"su Entrada es de {entrada}")
     return final2
 
 def main (value=None):
-    edad = int(input("Ingrese su edad: "))
+    edad = pedir_edad()
     print(verificador_edad(edad))
     ocupacion = input("Es usted estudiante S/N: ")
     print(verificador_ocupacion(ocupacion))
