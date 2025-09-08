@@ -1,73 +1,84 @@
-def pedir_edad():
+def pedir_entero(mensaje, minimo=None, maximo=None):
     while True:
-        entrada = input("Ingrese su edad: ")
-        if entrada.isdigit():
-            return int(entrada)
+        entrada = input(mensaje).strip()
+
+        if not entrada:
+            print("\n  No puede dejar el campo vacío.")
+            continue
+
+        if not entrada.isdigit():
+            print(" Solo se permiten números enteros positivos.")
+            continue
+
+        valor = int(entrada)
+
+        if minimo is not None and valor < minimo:
+            print(f"\n  El valor no puede ser menor a {minimo}.")
+            continue
+        if maximo is not None and valor > maximo:
+            print(f"\n  El valor no puede ser mayor a {maximo}.")
+            continue
+
+        return valor
+
+
+def pedir_si_no(mensaje):
+    while True:
+        entrada = input(mensaje).strip().lower()
+
+        if not entrada:
+            print("  No puede dejar la respuesta vacía.")
+            continue
+
+        if entrada in ["si"]:
+            return True
+        elif entrada in ["no"]:
+            return False
         else:
-            print("Por favor, ingrese solo números válidos (sin letras ni símbolos).")
+            print("  Respuesta inválida. Escriba 'si' o 'no'.")
 
-def verificador_edad(edad):
-    """
-   Esta función toma la edad del usuario y define si es mayor de edad, niño menor, joven o mayor de edad.
-   De igual manera define si la persona ha nacido o no vive.
 
-   Args:
-       edad (int): valor numérico insertado por el usuario.
-
-   Returns:
-       str: final (mensaje + el valor de la entrada al cine)
-       """
-    global entrada
-    entrada = 0
-    final = ""
-
-    if 1 < edad <= 12:
-        entrada = 10000
-        final = f"Usted es un niño menor, su entada tiene un costo de {entrada}"
-    elif 12 <= edad <= 17:
-        entrada = 15000
-        final = f"Usted es un joven, su entada tiene un costo de {entrada}"
-    elif 18 <= edad <= 80:
-        entrada = 20000
-        final = f"Usted es un adulto, su entada tiene un costo de {entrada}"
-    elif edad >= 80:
-        print(f"No puede ingresar muertos al cine")
-        exit(0)
+def calcular_precio(edad):
+    if edad < 12:
+        print("Categoría: Niño")
+        return 10000
+    elif 12 <= edad < 18:
+        print("Categoría: Joven")
+        return 15000
     else:
-        print("No ha nacido")
-        exit(0)
-    return final
+        print("Categoría: Adulto")
+        return 20000
 
-def verificador_ocupacion(ocupacion):
-    """
-       Esta función toma la respuesta del usuario para poder definir si tiene un descuento o no.
-       Todas las personas tienen descuento siempre y cuando sean estudiantes, independientemente de la edad.
 
-       Args:
-           ocupacion (str): respuesta del usuario
+def main():
 
-       Returns:
-           str: final2 (mensaje + el valor de la entrada al cine con descuento)
-           """
-    ocupacion_nueva = ocupacion.replace(" ", "")
-    final2 = ""
-    if ocupacion_nueva.lower() == "s":
-        descuento = entrada * 0.10
-        entrada_nueva = entrada - descuento
-        final2 = (f"El descuento es de {descuento}\n"
-                  f"------------------------------------------\n"
-                  f"El valor de su entrada es de {entrada_nueva}\n"
-                  f"------------------------------------------")
-    else:
-        final2 = (f"Usted no tiene descuento\n"
-                  f"su Entrada es de {entrada}")
-    return final2
+    print(" Bienvenido al sistema del cine ")
 
-def main (value=None):
-    edad = pedir_edad()
-    print(verificador_edad(edad))
-    ocupacion = input("Es usted estudiante S/N: ")
-    print(verificador_ocupacion(ocupacion))
+
+    cantidad = pedir_entero("Digite la cantidad de personas a ingresar: ", minimo=1, maximo=20)
+
+    total_general = 0
+
+    for i in range(cantidad):
+        print(f"\n Persona número {i + 1}")
+
+        edad = pedir_entero("Digite su edad: ", minimo=1, maximo=90)
+        precio = calcular_precio(edad)
+
+        if pedir_si_no("¿Es estudiante? (si/no): "):
+            descuento = precio * 0.10
+            precio -= descuento
+            print(f" Descuento aplicado: ${descuento:.0f}")
+        else:
+            print(" No aplica descuento.")
+
+        print(f" Precio final: ${precio:.0f}")
+        total_general += precio
+
+    print("\n" + "-" * 50)
+    print(f" Total a pagar por todas las entradas: ${total_general:.0f}")
+    print("-" * 50)
+
 
 if __name__ == "__main__":
     main()

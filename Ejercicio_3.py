@@ -1,26 +1,30 @@
-def verifiricador_contrasena():
+def verificador_contrasena():
     """
-        Esta función verifica si la palabra cumple con las condiciones para ser una contraseña.
-        Verifica si dentro de la contraseña hay una letra mayuscula, un número y si tiene 8 caracteres.
+    Esta función verifica si la palabra cumple con las condiciones para ser una contraseña.
+    Verifica si dentro de la contraseña hay una letra mayuscula, un número y si tiene 8 caracteres.
 
-       :returns:
-
-        """
+    """
+    print(" Validador de Contraseñas")
     while True:
+        contrasena = input("\nCree una contraseña: ").strip()
 
-        contrasena = input("Ingrese su contraseña: ")
         if len(contrasena) < 8:
-            print("La contraseña debe tener al menos 8 caracteres.")
-        elif not any(l.isdigit() for l in contrasena):
-            print("La contraseña debe tener almenos un número")
-        elif not any(l.isupper() for l in contrasena):
-            print("La contraseña debe tener almenos una Mayuscula")
-        else:
-            print("Contraseña guardada")
-            break
+            print(" La contraseña debe tener al menos 8 caracteres.")
+            continue
 
+        if not any(c.isupper() for c in contrasena):
+            print(" La contraseña debe contener al menos una letra mayúscula.")
+            continue
 
-def main (value=None):
-    print(verifiricador_contrasena())
+        if not any(c.isdigit() for c in contrasena):
+            print(" La contraseña debe contener al menos un número.")
+            continue
+
+        print(" Contraseña válida. Registro exitoso.")
+        break
+
+def main():
+    verificador_contrasena()
+
 if __name__ == "__main__":
     main()

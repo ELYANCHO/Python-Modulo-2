@@ -1,13 +1,3 @@
-"""
-Ejercicio 6: Analizador de Posiciones de Letras con enumerate
-Crea una función que reciba una frase y una letra. La función debe devolver una lista con todos los índices
-(posiciones) en los que aparece esa letra en la frase.
-•	Ejemplo: encontrar_indices("Hola SENA", "a") debería devolver [3, 8].
-Conceptos aplicados: Funciones, enumerate(), bucle for, list.append().
-
-"""
-
-
 def encontrar_indices(frase: str, letra: str) -> list:
     """
     Busca todas las posiciones en las que aparece una letra en una frase.
