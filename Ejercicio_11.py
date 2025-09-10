@@ -1,37 +1,26 @@
-def validar_cedula(cedula):
+def validar_cedula(cedula: str) -> bool:
     """
-        Esta función valida un número de cédula basado en la regla de que la suma de sus dígitos debe ser un número par.
+    Valida un número de cédula basado en la regla:
+    La suma de sus dígitos debe ser un número par.
 
-        Args:
-            cedula (str): El número de cédula a validar.
-        Returns:
-            bool: True si la cédula es válida (suma de dígitos es
-                    par), False en caso contrario.
+    Args:
+        cedula (str): Número de cédula como string.
 
-        """
+    Returns:
+        bool: True si es válido, False en caso contrario.
+    """
     if not cedula.isdigit():
         print("Error: La cédula debe contener solo números.")
         return False
-    suma = 0
-    for digito in cedula:
-        suma += int(digito)
-    if suma < 10:
-        print("la cedula debe tener 10 numeros")
+
+    if len(cedula) != 10:
+        print("Error: la cédula debe tener exactamente 10 dígitos.")
         return False
+
+    suma = sum(int(digito) for digito in cedula)
 
     if suma % 2 == 0:
         return True
     else:
-        print(" Cédula inválida: la suma de los dígitos no es par.")
+        print("Cédula inválida: la suma de los dígitos no es par.")
         return False
-
-while True:
-    cedula_usuario = input("Ingrese su cédula: ")
-    if validar_cedula(cedula_usuario):
-        print("Cédula válida")
-        break
-
-def main():
-    validar_cedula(cedula_usuario)
-if __name__ == "__main__":
-    main()

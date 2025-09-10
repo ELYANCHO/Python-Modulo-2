@@ -1,122 +1,138 @@
 import random
 
-# Tamaño del tablero
-N = 5
+def crear_estado_inicial(tamano=5, longitud_barco=3):
+    """Crea y devuelve el estado inicial del juego."""
+    estado = {
+        "tamano": tamano,
+        "longitud_barco": longitud_barco,
+        "tablero": crear_tablero(tamano),
+        "barco": posicionar_barco(tamano, longitud_barco),
+        "disparos": [],
+        "aciertos": [],
+        "turnos_restantes": 10
+    }
+    return estado
 
+def crear_tablero(tamano):
+    """Crea un tablero de N x N lleno de '~'."""
+    return [["~"] * tamano for _ in range(tamano)]
 
-def crear_tablero():
-    """Crea un tablero vacío de 5x5"""
-    return [["~" for _ in range(N)] for _ in range(N)]
-
-
-def colocar_barco():
-    """
-    Esta función coloca un barco de 3 casillas horizontal o vertical.
-
-    Args:
-        None
-    Returns:
-        list: lista de coordenadas de los puntos de disparo
-    """
-    """Coloca un barco de 3 casillas horizontal o vertical"""
+def posicionar_barco(tamano, longitud_barco):
+    """Posiciona un barco de forma aleatoria en el tablero."""
     orientacion = random.choice(["H", "V"])
-    if orientacion == "H":  # Horizontal
-        fila = random.randint(0, N - 1)
-        col = random.randint(0, N - 3)
-        return [(fila, col + i) for i in range(3)]
-    else:  # Vertical
-        fila = random.randint(0, N - 3)
-        col = random.randint(0, N - 1)
-        return [(fila + i, col) for i in range(3)]
+    fila_o_columna = random.randint(0, tamano - 1)
+    inicio = random.randint(0, tamano - longitud_barco)
+    posiciones = []
 
+    if orientacion == "H":
+        for i in range(longitud_barco):
+            posiciones.append((fila_o_columna, inicio + i))
+    else:
+        for i in range(longitud_barco):
+            posiciones.append((inicio + i, fila_o_columna))
+    return posiciones
+
+def disparar(estado, fila, columna):
+    """
+    Procesa un disparo y actualiza el estado del juego.
+    Retorna el resultado del disparo y el estado actualizado.
+    """
+    if not (0 <= fila < estado["tamano"] and 0 <= columna < estado["tamano"]):
+        return "invalido", estado
+
+    coordenada = (fila, columna)
+    if coordenada in estado["disparos"]:
+        return "ya_disparado", estado
+
+    estado["disparos"].append(coordenada)
+    estado["turnos_restantes"] -= 1
+
+    if coordenada in estado["barco"]:
+        estado["aciertos"].append(coordenada)
+        estado["tablero"][fila][columna] = "X"
+        return "tocado", estado
+    else:
+        estado["tablero"][fila][columna] = "O"
+        return "agua", estado
+
+def esta_terminado(estado):
+    """Verifica si el juego ha terminado."""
+    return estado["turnos_restantes"] <= 0 or len(estado["aciertos"]) == estado["longitud_barco"]
+
+def ha_ganado(estado):
+    """Verifica si el jugador ha ganado."""
+    return len(estado["aciertos"]) == estado["longitud_barco"]
+
+def convertir_coordenada(coord):
+    """Convierte una coordenada tipo 'A3' a índices de lista (fila, columna)."""
+    letras = "ABCDE"
+    if len(coord) != 2:
+        return None
+    fila_letra = coord[0].upper()
+    columna_str = coord[1]
+
+    if fila_letra not in letras or not columna_str.isdigit():
+        return None
+
+    fila = letras.find(fila_letra)
+    columna = int(columna_str) - 1
+
+    if not 0 <= columna < len(letras):
+        return None
+
+    return (fila, columna)
 
 def imprimir_tablero(tablero):
-    """
-    Esta función muestra el tablero con coordenadas.
-
-    Args:
-        tablero (list): lista de listas que representa el tablero
-    Returns:
-        None
-    """
-    """Muestra el tablero con coordenadas"""
-    print("   " + " ".join(str(i + 1) for i in range(N)))
+    """Imprime el tablero en la consola."""
+    print("  1 2 3 4 5")
+    letras = "ABCDE"
     for i, fila in enumerate(tablero):
-        print(chr(65 + i) + "  " + " ".join(fila))
+        print(letras[i], " ".join(fila))
 
 
-def convertir_coordenada(coordenada):
-    """
-    Esta función convierte entrada tipo 'A3' en índices (fila, columna).
+def game():
+    """Función principal para jugar al juego de Batalla Naval."""
+    estado = crear_estado_inicial()
 
-    Args:
-        coordenada (str): entrada del usuario
-    Returns:
-        list: lista de dos índices (fila, columna)
-    """
-    """Convierte entrada tipo 'A3' en índices (fila, columna)"""
-    try:
-        fila = ord(coordenada[0].upper()) - 65
-        col = int(coordenada[1]) - 1
-        if 0 <= fila < N and 0 <= col < N:
-            return fila, col
-    except:
-        return None
-    return None
+    print("¡Bienvenido a Batalla Naval Simplificada!")
+    print(f"Debes hundir un barco de {estado['longitud_barco']} casillas escondido en el tablero.")
+    print(f"Tienes {estado['turnos_restantes']} turnos. Usa coordenadas como A1, B3, etc.\n")
 
+    while not esta_terminado(estado):
+        imprimir_tablero(estado["tablero"])
+        print(f"\nTurnos restantes: {estado['turnos_restantes']}")
 
-def jugar():
-    """
-    Este programa juega al juego de batalla naval.
+        entrada = input("Ingresa una coordenada (ej. A3): ").strip().upper()
+        coordenada = convertir_coordenada(entrada)
 
-    Args:
-        None
-    Returns:
-        None
-    """
-    tablero = crear_tablero()
-    barco = colocar_barco()
-    intentos = 10
-    aciertos = 0
-
-    print(" Bienvenido a Batalla Naval (5x5)")
-    print("Tienes 10 turnos para hundir un barco de 3 casillas.")
-    imprimir_tablero(tablero)
-
-    while intentos > 0 and aciertos < 3:
-        disparo = input("\nIngresa coordenada (ej: A3): ").strip().upper()
-        pos = convertir_coordenada(disparo)
-
-        if not pos:
-            print(" Entrada inválida. Usa formato LetraNúmero (ej: B2).")
+        if coordenada is None:
+            print("Entrada no válida. Usa formato como A1, B5, etc.\n")
             continue
 
-        fila, col = pos
-        if tablero[fila][col] != "~":
-            print(" Ya disparaste aquí.")
-            continue
+        fila, columna = coordenada
+        resultado, estado = disparar(estado, fila, columna)
 
-        if pos in barco:
-            tablero[fila][col] = "X"
-            aciertos += 1
-            print(" ¡Tocado!")
-        else:
-            tablero[fila][col] = "O"
-            print(" Agua.")
+        if resultado == "tocado":
+            print("¡Tocado!\n")
+        elif resultado == "agua":
+            print("¡Agua!\n")
+        elif resultado == "ya_disparado":
+            print("¡Ya has disparado allí! Intenta otra coordenada.\n")
+        elif resultado == "invalido":
+            print("Coordenada fuera del tablero. Intenta de nuevo.\n")
 
-        intentos -= 1
-        print(f"Turnos restantes: {intentos}")
-        imprimir_tablero(tablero)
+    imprimir_tablero(estado["tablero"])
 
-    # Resultado final
-    if aciertos == 3:
-        print("\n ¡Felicidades! Hundiste el barco.")
+    if ha_ganado(estado):
+        print("\n¡Felicidades! ¡Hundiste el barco!")
     else:
-        print("\n💀 Te quedaste sin turnos. El barco estaba en:")
-        print([f"{chr(65 + f)}{c + 1}" for f, c in barco])
+        print("\nSe acabaron los turnos. ¡Has perdido!")
+        print("La ubicación del barco era:")
+        tablero_barco = crear_tablero(estado["tamano"])
+        for fila, col in estado["barco"]:
+            tablero_barco[fila][col] = "B"
+        imprimir_tablero(tablero_barco)
 
 
-def main():
-    jugar()
 if __name__ == "__main__":
-    main()
+    game()

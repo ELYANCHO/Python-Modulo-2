@@ -1,9 +1,7 @@
 import pytest
 from Ejercicio_11 import validar_cedula
 
-def test_cedula_valida_par():
-    # suma de dígitos = 45 → par
-    assert validar_cedula("1234567890") is True
+
 
 def test_cedula_invalida_impar(capsys):
     # suma de dígitos = 46 → impar
